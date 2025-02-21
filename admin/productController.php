@@ -30,17 +30,33 @@
             </select>
         </div>
         <div class="col-md-3">
-            <label for="selectCategoris" class="form-label">Loại</label>
-            <select id="selectCategoris" class="form-select" name="selectCategoris">
-                <option>Đồng hồ cơ</option>
-                <option>Đồng hồ điện tử</option>
+            <label for="selectCategories" class="form-label">Loại</label>
+            <select id="selectCategories" class="form-select" name="selectCategories">
+            <?php 
+                     include("../config/config.php");
+                     $sql = "SELECT * FROM categories";
+                     $result = $conn->query($sql);
+                     if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value=".$row['id'].">".$row['name']."</option>";
+                        }
+                    }
+                ?>
             </select>
         </div>
         <div class="col-md-3">
             <label for="selectBrands" class="form-label">Thương hiệu</label>
             <select id="selectBrands" class="form-select" name="selectBrands">
-                <option>Đồng hồ cơ</option>
-                <option>Đồng hồ điện tử</option>
+                <?php 
+                     include("../config/config.php");
+                     $sql = "SELECT * FROM brands";
+                     $result = $conn->query($sql);
+                     if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value=".$row['id'].">".$row['name']."</option>";
+                        }
+                    }
+                ?>
             </select>
         </div>
         <div class="col-md-2">
@@ -89,7 +105,6 @@
                     echo "<td>" . $row['price'] . "</td>";
                     echo "<td>" . $row['brand_name'] . "</td>";
                     echo "<td>" . $row['minimumOrderQuantity'] . "</td>";
-                    // Thêm nút xóa với liên kết chứa tham số delete
                     echo "<td>
                             <a href='productController.php?delete=" . $row['id'] . "' class='btn btn-danger' onclick=\"return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');\">Xóa</a>
                           </td>";
@@ -104,14 +119,16 @@
             if (isset($_GET['delete'])) {
                 $delete_id = intval($_GET['delete']);
                 $sql_delete = "DELETE FROM products WHERE id = $delete_id";
-
                 if ($conn->query($sql_delete) === TRUE) {
                     echo "<script>
                     window.location.href = 'index.php?page=productManager';
                      </script>";
                     exit;
                 } else {
-                    echo "Lỗi xóa sản phẩm: " . $conn->error;
+                    echo "Lỗi xóa sản phẩm: " . $conn->error ;
+                    echo "<script>
+                    window.location.href = 'index.php?page=productManager';
+                     </script>";
                 }
             }
             ?>
@@ -133,6 +150,7 @@
             $selectObjectUsed = $_POST['selectObjectUsed'];
             $selectBrands = $_POST['selectBrands'];
             $inputPromotion = $_POST['inputPromotion'];
+            $selectCategories=$_POST['selectCategories'];
             // Xử lý upload ảnh
             $image = $_FILES['inputImage']['name'];
             $image_tmp = $_FILES['inputImage']['tmp_name'];
@@ -140,7 +158,7 @@
             
             // Câu lệnh SQL đã được sửa
             $sql_add = "INSERT INTO products (category_id, name, price, description, image, shellMaterial, objectUsed, minimumOrderQuantity, promotion, brand_id)
-                        VALUES ('1', '$inputNameProduct', '$inputPrice', '$inputDescription', '$image', '$inputShellMaterial', '$selectObjectUsed', '$inputAmount', '$inputPromotion', '1')";
+                        VALUES ('$selectCategories', '$inputNameProduct', '$inputPrice', '$inputDescription', '$image', '$inputShellMaterial', '$selectObjectUsed', '$inputAmount', '$inputPromotion', ' $selectBrands')";
 
             if($conn->query($sql_add) === true){
                 move_uploaded_file($image_tmp, 'uploads/'.$image);

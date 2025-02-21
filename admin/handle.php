@@ -34,6 +34,10 @@ function checkLogin($username, $password) {
 function ensureLoginAdmin() {
     if (!isset($_SESSION['fullName'])) {
         header("Location: loginAdmin.php");
+        return;
+    }
+    if($_SESSION['admin']!=1){
+        header("Location: loginAdmin.php");
     }
 }
 

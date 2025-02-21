@@ -51,7 +51,6 @@
             } else {
                 echo "<script>alert('Tên tài khoản hoặc mật khẩu không đúng!');</script>";
             }
-           
         }
         ?>
 </body>
